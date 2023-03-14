@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    env_file:
+      - docker.env
+    volumes:
+      - /var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+    networks:
+      - my_network
+
+  nestjs-api:
+    image: nestjs-api
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
