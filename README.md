@@ -7,7 +7,8 @@
 
 ## Description
 
- Not 
+ Separate envrironment for e2e
+ File uploader looks bad to me, but not much time to make it better
 
 
 ## Running the app
