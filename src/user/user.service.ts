@@ -5,12 +5,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TokensPairDto } from './dto/tokens-pair.dto';
 import { EncryptionService } from './encryption.service';
 import { AuthJwtService } from './auth-jwt.service';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { LoginLocalRequestDto } from './dto/login-request.dto';
-import { CreateUserDto } from './dto/сreate-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { UserEntity } from './user.entity';
 
@@ -23,7 +22,7 @@ export class UserService {
     private readonly authJwtService: AuthJwtService,
   ) {}
 
-  public async create(identity: CreateUserDto): Promise<UserResponseDto> {
+  public async signUp(identity: CreateUserDto): Promise<UserResponseDto> {
     const user = await this.userRepository.findOneBy({
       name: identity.name,
     });
@@ -31,6 +30,7 @@ export class UserService {
     if (user) {
       throw new ConflictException('User already exist');
     }
+
     const passwordHash = await this.encryptionService.generateHash(
       identity.password,
     );
@@ -50,28 +50,24 @@ export class UserService {
   ): Promise<LoginResponseDto> {
     const user = await this.userRepository.findOneBy({ name: loginData.name });
 
+    if (!user) {
+      throw new UnauthorizedException('Incorrect login or password');
+    }
+
     const isPasswordValid = await this.encryptionService.compareHash(
       loginData.password,
       user.password,
     );
+
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Incorrect password');
+      throw new UnauthorizedException('Incorrect login or password');
     }
 
-    const tokens = await this.generateAndSaveJwtPair(user.id);
+    const tokens = await this.authJwtService.generateAndSaveJwtPair(user.id);
 
     return {
       user: new UserResponseDto(user),
       tokens,
     };
-  }
-
-  public async generateAndSaveJwtPair(id: number): Promise<TokensPairDto> {
-    const newJwtPair = await this.authJwtService.generateTokensPair(id);
-    await this.userRepository.update(id, {
-      refreshToken: newJwtPair.refreshToken,
-    });
-
-    return newJwtPair;
   }
 }

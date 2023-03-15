@@ -1,19 +1,18 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
-@Entity({ name: 'user' })
+@Entity({ name: 'users' })
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 300, unique: true, nullable: true })
+  @Column({ type: 'varchar', length: 300, nullable: true })
   email: string;
-  //неявное требование
-  @Column({ type: 'varchar', length: 300, unique: true, nullable: true })
+
+  @Column({ type: 'varchar', length: 300, unique: true, nullable: false })
   name: string;
 
-  @Exclude({ toPlainOnly: true })
-  @Column({ type: 'varchar', length: 300, nullable: true })
+  @Column({ type: 'varchar', length: 300, nullable: false })
   password: string;
 
   @Column({ type: 'varchar', length: 500, nullable: true })

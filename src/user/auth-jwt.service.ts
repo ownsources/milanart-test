@@ -2,16 +2,34 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { TokensPairDto } from './dto/tokens-pair.dto';
-import { TokenPayloadType } from '../auth/types/token-payload.type';
+import { TokenPayloadType } from '../common/token-payload.type';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserEntity } from './user.entity';
 
 @Injectable()
 export class AuthJwtService {
   constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
 
-  public async generateTokensPair(id: number): Promise<TokensPairDto> {
+  public async generateAndSaveJwtPair(id: number): Promise<TokensPairDto> {
+    const newJwtPair = await this.generateTokensPair(id);
+    await this.userRepository.update(id, {
+      refreshToken: newJwtPair.refreshToken,
+    });
+
+    return newJwtPair;
+  }
+
+  public async verifyToken<T extends {}>(token: string): Promise<T> {
+    return this.jwtService.verify(token);
+  }
+
+  private async generateTokensPair(id: number): Promise<TokensPairDto> {
     const accessPayload: TokenPayloadType = { id };
     const refreshPayload: TokenPayloadType = { id };
 
@@ -27,9 +45,5 @@ export class AuthJwtService {
       accessToken,
       refreshToken,
     };
-  }
-
-  public async verifyToken<T extends {}>(token: string): Promise<T> {
-    return this.jwtService.verify(token);
   }
 }

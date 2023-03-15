@@ -5,7 +5,6 @@ import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './user/user.entity';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({

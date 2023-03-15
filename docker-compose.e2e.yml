@@ -1,32 +1,29 @@
 version: '3.8'
 
 services:
-  db:
+  db-e2e:
     image: postgres:latest
     env_file:
       - docker.env
-    volumes:
-      - /var/lib/postgresql/data
     ports:
-      - "5431:5432"
+      - "5434:5432"
     networks:
       - my_network
 
-  nestjs-api:
-    image: nestjs-api
+  nestjs-api-e2e:
+    build:
+      dockerfile: Dockerfile.e2e
     ports:
       - '3000:3000'
     env_file:
-      - .env
+      - e2e.env
     depends_on:
-      - db
+      - db-e2e
     networks:
       - my_network
     volumes:
-      - app-data:/app/data
-
-volumes:
-  app-data:
+      - type: tmpfs
+        target: /app/data
 
 networks:
   my_network:

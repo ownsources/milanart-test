@@ -1,6 +1,6 @@
 {
-  "name": "pr",
-  "version": "0.0.1",
+  "name": "milanart-test",
+  "version": "1.0.0",
   "description": "",
   "author": "",
   "private": true,
@@ -46,10 +46,12 @@
   "devDependencies": {
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
+    "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.13",
     "@types/jest": "28.1.8",
+    "@types/multer": "^1.4.7",
     "@types/node": "^16.0.0",
-    "@types/supertest": "^2.0.11",
+    "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",

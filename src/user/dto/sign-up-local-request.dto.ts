@@ -1,18 +1,19 @@
-import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { Transform } from 'class-transformer';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class SignUpLocalRequestDto {
   @IsEmail()
-  @IsNotEmpty()
+  @IsOptional()
+  @Transform((params: { value: string }) => params.value.trim())
   email: string;
 
   @IsNotEmpty()
   @IsString()
-  @Matches(/^(?=.*[0-9])(?=.*[a-z]).{8}/, {
-      message: 'Password must be at least 8 characters long, and must have at least 1 letter and at least 1 number.',
-  })
+  @Transform((params: { value: string }) => params.value.trim())
   password: string;
 
   @IsNotEmpty()
   @IsString()
+  @Transform((params: { value: string }) => params.value.trim())
   name: string;
 }

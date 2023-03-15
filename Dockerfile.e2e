@@ -1,0 +1,11 @@
+FROM node:lts-alpine
+
+WORKDIR /user/src/app
+
+COPY . .
+
+RUN npm ci
+
+USER node
+
+CMD ["npm", "run", "test:e2e"]
